@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { formatBytes } from '@jstorrent/ui'
 import type { BtEngine } from '@jstorrent/engine'
-import jsIcon from '../assets/js-32.png'
+import jsIcon from '../assets/js-32.png?url'
 
 interface AppHeaderProps {
   /** The torrent engine (for stats display) */
@@ -39,6 +39,7 @@ export function AppHeader({
         padding: 'var(--spacing-sm, 8px) var(--spacing-lg, 16px)',
         borderBottom: '1px solid var(--border-color)',
         display: 'flex',
+        flexWrap: 'wrap',
         alignItems: 'center',
         gap: 'var(--spacing-lg, 16px)',
       }}
@@ -57,6 +58,8 @@ export function AppHeader({
         style={{
           marginLeft: 'auto',
           display: 'flex',
+          flexWrap: 'wrap',
+          maxWidth: '100%',
           alignItems: 'center',
           gap: 'var(--spacing-md, 12px)',
         }}

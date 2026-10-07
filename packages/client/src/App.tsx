@@ -22,7 +22,7 @@ import { useChromeOSBootstrap } from './hooks/useChromeOSBootstrap'
 import { AppContent } from './AppContent'
 import { copyTextToClipboard } from './utils/clipboard'
 import { standaloneAlert } from './utils/dialogs'
-import jsIcon from './assets/js-32.png'
+import jsIcon from './assets/js-32.png?url'
 
 // Re-export types for backwards compatibility
 export type { AppContentProps, FileInfo } from './AppContent'
@@ -324,6 +324,7 @@ function App() {
           <div
             style={{
               padding: '8px 16px',
+              flexWrap: 'wrap',
               borderBottom: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
@@ -412,7 +413,16 @@ function App() {
                 ))}
             </div>
 
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                marginLeft: 'auto',
+                display: 'flex',
+                flexWrap: 'wrap',
+                maxWidth: '100%',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
               <span style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>
                 {engine ? (
                   <>

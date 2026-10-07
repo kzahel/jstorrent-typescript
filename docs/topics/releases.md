@@ -45,6 +45,19 @@ Use versions without a leading `v`, for example:
 All release scripts live in [`scripts/`](../../scripts/README.md). The matching
 workflows live under [`.github/workflows/`](../../.github/workflows/).
 
+## Website Replacement Qualification
+
+The 2026-10-08 compatible website patch is locally qualified using a frozen
+fresh-checkout installation, Astro 7.3.6 six-page static build, eight hosted
+security cases, 112 shared-client cases and 18 responsive browser captures.
+Explicit logo URL imports and wrapping header controls resolve the actual
+hosted `/app` broken image and narrow-screen overflow. See
+[the website README](../../website/README.md) for commands and the bounded
+cache-library assessment. The website's version-scoped npm graph is clear;
+this does not clear unrelated retired-workspace findings or establish public
+deployment. Normal relevant `main` changes still deploy through the existing
+website workflow; local commits do not authorize that push.
+
 ## Engine and Plugin SDK
 
 Both npm releases require a matching changelog entry and update their package
