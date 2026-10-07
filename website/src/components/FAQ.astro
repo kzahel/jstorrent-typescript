@@ -1,4 +1,5 @@
 ---
+import { sourceRepositoryUrl } from '../lib/production-site'
 ---
 
 <section id="help" class="section">
@@ -85,23 +86,21 @@
         <div class="faq-answer">
           <p>
             Yes. JSTorrent is
-            <a href="https://github.com/kzahel/jstorrent">open source</a> and every release is
-            built automatically by
-            <a href="https://github.com/kzahel/jstorrent/actions">GitHub Actions CI</a>
-            &mdash; no binaries are built on a developer&rsquo;s machine.
+            <a href={sourceRepositoryUrl}>open source</a> and release builds use
+            <a href={sourceRepositoryUrl + '/actions'}>GitHub Actions CI</a>
+            with platform signing checks.
           </p>
           <ul>
             <li>
               <strong>macOS:</strong> Signed with an Apple Developer ID certificate and notarized
-              by Apple, so Gatekeeper trusts it on first launch.
+              by Apple.
             </li>
             <li>
-              <strong>Windows:</strong> Code-signed via Azure Trusted Signing, so SmartScreen
-              recognizes the publisher.
+              <strong>Windows:</strong> Installers identify the publisher through Azure Trusted Signing.
             </li>
             <li>
-              <strong>Android:</strong> Signed with a Play Store upload key and distributed
-              through Google Play.
+              <strong>Android:</strong> Release bundles use the upload certificate; Google Play signs the
+              distributed app with the managed app-signing certificate.
             </li>
             <li>
               <strong>Chrome extension:</strong> Reviewed and distributed through the Chrome Web
@@ -114,7 +113,7 @@
           </ul>
           <p>
             You can audit the full build pipeline in the
-            <a href="https://github.com/kzahel/jstorrent/tree/main/.github/workflows">CI workflows</a>
+            <a href={sourceRepositoryUrl + '/tree/main/.github/workflows'}>CI workflows</a>
             and verify that release artifacts match the tagged source code.
           </p>
         </div>

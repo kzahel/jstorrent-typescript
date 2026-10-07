@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import type { DesktopDownloadLinks } from '../lib/production-release'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const chromeApi = (globalThis as any).chrome as any
@@ -10,26 +11,15 @@ const GITHUB_RELEASES_URL = 'https://api.github.com/repos/kzahel/jstorrent/relea
 
 const FALLBACK_TAURI_TAG = 'v0.1.25'
 
-interface TauriReleaseInfo {
-  tag: string
-  windowsUrl: string
-  macosPkgArmUrl: string
-  macosPkgIntelUrl: string
-  macosArmUrl: string
-  macosIntelUrl: string
-  linuxDebUrl: string
-  linuxAppImageUrl: string
-  linuxArm64DebUrl: string
-  linuxArm64AppImageUrl: string
-}
+type TauriReleaseInfo = DesktopDownloadLinks
 
 function makeTauriReleaseInfo(tag: string): TauriReleaseInfo {
   const version = tag.replace(/^v/, '')
   return {
     tag,
     windowsUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_x64-setup.exe`,
-    macosPkgArmUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_aarch64.pkg`,
-    macosPkgIntelUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_x64.pkg`,
+    macosPrimaryArmUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_aarch64.pkg`,
+    macosPrimaryIntelUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_x64.pkg`,
     macosArmUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_aarch64.dmg`,
     macosIntelUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_x64.dmg`,
     linuxDebUrl: `https://github.com/kzahel/jstorrent/releases/download/tauri-app-${tag}/JSTorrent_${version}_amd64.deb`,
@@ -62,10 +52,16 @@ function compareVersions(a: string, b: string): number {
   return 0
 }
 
-function useGitHubReleases(fallbackTag: string): TauriReleaseInfo {
-  const [tauri, setTauri] = useState<TauriReleaseInfo>(() => makeTauriReleaseInfo(fallbackTag))
+function useGitHubReleases(
+  fallbackTag: string,
+  productionRelease: DesktopDownloadLinks | null,
+): TauriReleaseInfo {
+  const [tauri, setTauri] = useState<TauriReleaseInfo>(
+    () => productionRelease ?? makeTauriReleaseInfo(fallbackTag),
+  )
 
   useEffect(() => {
+    if (productionRelease) return
     let cancelled = false
     fetch(GITHUB_RELEASES_URL)
       .then((res) => res.json())
@@ -120,8 +116,8 @@ function useGitHubReleases(fallbackTag: string): TauriReleaseInfo {
           setTauri({
             tag,
             windowsUrl: windowsExe.browser_download_url,
-            macosPkgArmUrl: macosPkgArm?.browser_download_url ?? info.macosPkgArmUrl,
-            macosPkgIntelUrl: macosPkgIntel?.browser_download_url ?? info.macosPkgIntelUrl,
+            macosPrimaryArmUrl: macosPkgArm?.browser_download_url ?? info.macosPrimaryArmUrl,
+            macosPrimaryIntelUrl: macosPkgIntel?.browser_download_url ?? info.macosPrimaryIntelUrl,
             macosArmUrl: macosArm.browser_download_url,
             macosIntelUrl: macosIntel.browser_download_url,
             linuxDebUrl: linuxDeb.browser_download_url,
@@ -138,9 +134,9 @@ function useGitHubReleases(fallbackTag: string): TauriReleaseInfo {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [fallbackTag, productionRelease])
 
-  return tauri
+  return productionRelease ?? tauri
 }
 
 type Platform = 'windows' | 'mac' | 'linux'
@@ -172,6 +168,7 @@ function detectArm64(): boolean {
 
 interface DownloadsProps {
   tauriAppTag?: string
+  productionRelease?: DesktopDownloadLinks | null
 }
 
 const iconStyle = { width: 18, height: 18, fill: 'currentColor', flexShrink: 0 } as const
@@ -217,13 +214,13 @@ function CopyIcon() {
   )
 }
 
-export default function Downloads({ tauriAppTag }: DownloadsProps) {
+export default function Downloads({ tauriAppTag, productionRelease = null }: DownloadsProps) {
   const [copied, setCopied] = useState(false)
   const [extensionInstalled, setExtensionInstalled] = useState<boolean | null>(null)
   const [status, setStatus] = useState<StatusResponse | null>(null)
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(detectPlatform)
   const isArm64 = detectArm64()
-  const tauri = useGitHubReleases(tauriAppTag || FALLBACK_TAURI_TAG)
+  const tauri = useGitHubReleases(tauriAppTag || FALLBACK_TAURI_TAG, productionRelease)
 
   useEffect(() => {
     const checkExtension = () => {
@@ -285,8 +282,7 @@ export default function Downloads({ tauriAppTag }: DownloadsProps) {
         <div className="download-subsection">
           <h3>Desktop App</h3>
           <p>
-            Prefer a standalone app, or don&apos;t use a Chromium-based browser? Built with Rust —
-            not Electron, no bloat. No browser required.
+            JSTorrent for Windows, Mac, and Linux. Use the desktop app on its own without a browser.
           </p>
           {status?.desktopVersion && (
             <div
@@ -331,10 +327,10 @@ export default function Downloads({ tauriAppTag }: DownloadsProps) {
 
             {selectedPlatform === 'mac' && (
               <div className="btn-group">
-                <a href={tauri.macosPkgArmUrl} className="btn btn-primary">
+                <a href={tauri.macosPrimaryArmUrl} className="btn btn-primary">
                   Download for Mac — Apple Silicon ({tauri.tag})
                 </a>
-                <a href={tauri.macosPkgIntelUrl} className="btn btn-secondary">
+                <a href={tauri.macosPrimaryIntelUrl} className="btn btn-secondary">
                   Intel Mac
                 </a>
               </div>
@@ -342,19 +338,23 @@ export default function Downloads({ tauriAppTag }: DownloadsProps) {
 
             {selectedPlatform === 'linux' && (
               <>
-                <p>Install via terminal (auto-detects .deb / .rpm / AppImage):</p>
-                <div className="command-box">
-                  <code>curl -fsSL https://jstorrent.com/install.sh | bash</code>
-                  <button
-                    className="copy-btn"
-                    onClick={copyToClipboard}
-                    aria-label="Copy to clipboard"
-                  >
-                    <CopyIcon />
-                  </button>
-                  {copied && <div className="tooltip show">Copied!</div>}
-                </div>
-                <p style={{ marginTop: '1rem' }}>Or download directly:</p>
+                {!productionRelease && (
+                  <>
+                    <p>Install via terminal (auto-detects .deb / .rpm / AppImage):</p>
+                    <div className="command-box">
+                      <code>curl -fsSL https://jstorrent.com/install.sh | bash</code>
+                      <button
+                        className="copy-btn"
+                        onClick={copyToClipboard}
+                        aria-label="Copy to clipboard"
+                      >
+                        <CopyIcon />
+                      </button>
+                      {copied && <div className="tooltip show">Copied!</div>}
+                    </div>
+                    <p style={{ marginTop: '1rem' }}>Or download directly:</p>
+                  </>
+                )}
                 <div className="btn-group">
                   <a
                     href={isArm64 ? tauri.linuxArm64DebUrl : tauri.linuxDebUrl}
@@ -390,8 +390,8 @@ export default function Downloads({ tauriAppTag }: DownloadsProps) {
         <div id="download-android" className="download-subsection">
           <h3>Android & ChromeOS</h3>
           <p>
-            Native Android app powered by a QuickJS engine. Also works as a companion app on
-            ChromeOS.
+            JSTorrent for Android and supported Chromebooks. Use it on its own or with the Chrome
+            extension.
           </p>
           <a
             href={PLAY_STORE_URL}
@@ -420,8 +420,8 @@ export default function Downloads({ tauriAppTag }: DownloadsProps) {
           ) : extensionInstalled === false ? (
             <>
               <p>
-                The easiest way to use JSTorrent on desktop. Runs right in Chrome with magnet link
-                handling, right-click downloads, and the full JSTorrent UI.
+                Connect your browser to JSTorrent with magnet links, torrent files, and right-click
+                actions. The desktop or Android app can also run on its own.
               </p>
               <a
                 href={WEBSTORE_URL}

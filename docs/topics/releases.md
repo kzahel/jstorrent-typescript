@@ -140,8 +140,15 @@ version tag can be created with:
 ./scripts/release-website.sh <version>
 ```
 
-The deploy workflow discovers the latest Tauri release so download links use
-current desktop artifacts.
+The deploy workflow discovers the latest legacy Tauri release while
+`website/src/data/production-release.json` is disabled. The replacement handoff
+is locally prepared with a closed 23-asset inventory and original updater root.
+An explicitly enabled qualified descriptor overrides runtime discovery, uses
+actual macOS DMGs and removes the legacy Linux installer command. It remains
+disabled/unpopulated: final signed qualification, production publisher activation,
+public artifact verification and website deployment are separate gates.
+See [the website README](../../website/README.md) for activation invariants,
+focused guards and the distinction between metadata and byte/signature evidence.
 
 ## Recovery Rules
 

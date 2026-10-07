@@ -16,7 +16,7 @@
     "format:fix": "prettier --write . --log-level warn",
     "format": "prettier --check .",
     "docs:check": "node scripts/check-docs.mjs",
-    "test": "pnpm --recursive test && pnpm test:legacy-app && pnpm test:migration-page && pnpm test:hosted-context",
+    "test": "pnpm --recursive test && pnpm test:legacy-app && pnpm test:migration-page && pnpm test:hosted-context && pnpm test:production-website-release",
     "test:legacy-app": "node --test tests/legacy-packaged-app-*.test.mjs",
     "test:migration-page": "node --test tests/migration-page.test.mjs",
     "test:hosted-context": "node --test tests/hosted-context.test.mjs",
@@ -44,7 +44,8 @@
     "check:static": "npm-run-all --parallel lint format docs:check typecheck",
     "check:test": "npm-run-all --parallel test test:python",
     "checkall": "npm-run-all check:static check:test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:production-website-release": "node --test tests/production-website-release.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

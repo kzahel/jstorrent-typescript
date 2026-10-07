@@ -7,6 +7,7 @@ import Downloads from '../components/Downloads'
 import Changelog from '../components/Changelog.astro'
 import FAQ from '../components/FAQ.astro'
 import Footer from '../components/Footer.astro'
+import { productionSiteRelease } from '../lib/production-site'
 
 const tauriAppTag = import.meta.env.TAURI_APP_TAG || 'v0.1.14'
 ---
@@ -18,7 +19,7 @@ const tauriAppTag = import.meta.env.TAURI_APP_TAG || 'v0.1.14'
   <Header />
   <Hero />
   <About />
-  <Downloads client:only="react" tauriAppTag={tauriAppTag} />
+  <Downloads client:only="react" tauriAppTag={tauriAppTag} productionRelease={productionSiteRelease} />
   <Changelog />
   <FAQ />
   <Footer />

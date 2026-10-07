@@ -43,7 +43,8 @@ The build aliases `@jstorrent/engine`, `@jstorrent/client`, and
 
 [`deploy-website.yml`](../.github/workflows/deploy-website.yml) builds and
 deploys the site on relevant `main` changes and `website-v*` tags. It resolves
-the latest Tauri release so download links track current desktop artifacts.
+the latest legacy Tauri release while the production descriptor is disabled.
+An enabled curated descriptor takes precedence over runtime discovery.
 
 See the [release topic](../docs/topics/releases.md) for the optional website tag
 workflow.
@@ -76,3 +77,37 @@ pnpm --filter @jstorrent/client... build
 pnpm --filter @jstorrent/client typecheck
 pnpm --filter @jstorrent/client test
 ```
+
+## Curated production handoff
+
+`src/data/production-release.json` remains disabled with no release inventory.
+The old published downloads continue until a separately approved cutover.
+
+Before activation, qualify and publish the exact immutable replacement capsule.
+Record its canonical version and `desktop-v<version>` tag, repository
+`kzahel/rstorrent`, full source SHA, original updater key ID
+`415D3DF4B3D0CFB8`, and all 23 asset names, byte lengths and SHA-256 values.
+The production publisher is currently intentionally disabled; a signed candidate
+build does not establish publication. Do not enable this descriptor for a preview,
+synthetic fixture or an unavailable asset.
+
+The build validates the closed inventory and rejects missing, duplicate,
+wrong-product, malformed or mismatched metadata. Metadata validation does not
+verify file bytes, signatures or public availability. Those checks must precede
+setting `qualified` and explicitly enabling the descriptor in a reviewed commit.
+The enabled view pins every download to this capsule, uses actual macOS DMGs,
+and offers direct Linux packages without the legacy installer command. Source and CI links
+select the matching repository; existing support recipients are retained. Late
+legacy release discovery cannot replace these curated links.
+
+Run the focused guards with the repository's Node 24 or newer baseline:
+
+```bash
+pnpm test:production-website-release
+pnpm --filter jstorrent-website build
+```
+
+Review phone/wide Windows, Mac and both Linux architecture choices before an
+approved website deployment. A local disabled build or controlled fixture screen
+is preparation, not public delivery evidence. Pushing relevant `main` changes
+also deploys the website and requires an explicit instruction.

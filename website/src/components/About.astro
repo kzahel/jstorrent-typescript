@@ -1,4 +1,5 @@
 ---
+import { sourceRepositoryUrl } from '../lib/production-site'
 const testimonials = [
   '"It works great, it\'s easy to use."',
   '"Essential app"',
@@ -13,15 +14,15 @@ const testimonials = [
     <p>
       JSTorrent is a BitTorrent client that downloads torrent files with ease. It runs as a
       standalone desktop app on Windows, Mac, and Linux, as a native Android app, and as a
-      Chrome extension paired with a companion app on ChromeOS. It also works on ChromeOS Flex,
-      Android phones, and in any Chromium-based browser.
+      browser extension connected to the desktop or Android app. Supported Chromebooks
+      can use the Android app; browser integration requires a supported Chromium browser.
       <a href="#help">See all supported platforms &rarr;</a>
     </p>
     <p>
       Originally built for ChromeOS over 10 years ago, JSTorrent has been rebuilt from the
       ground up as a multi-platform,
-      <a href="https://github.com/kzahel/jstorrent">open source</a> project.
-      All builds are produced by GitHub Actions CI and are code-signed &mdash;
+      <a href={sourceRepositoryUrl}>open source</a> project.
+      Release packages and signatures are checked before distribution &mdash;
       <a href="#help">learn more</a>.
     </p>
 
