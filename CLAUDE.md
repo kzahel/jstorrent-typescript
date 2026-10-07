@@ -7,23 +7,35 @@
 For maintainer-specific cross-project context, see
 `~/code/dotfiles/projects/README.md` when that checkout is available.
 
-## ChromeOS Hardware Testing
+## Machine Testbeds and ChromeOS Hardware Testing
 
-The authoritative physical-device controller is the separate checkout at
-`~/code/chromeos-testbed`; do not add or revive a copied testbed inside this
-repository. Before ChromeOS hardware work, read
-`~/code/chromeos-testbed/skills/SKILL.md` and
-[`docs/topics/chromeos-hardware-testing.md`](docs/topics/chromeos-hardware-testing.md).
+Use the sibling `~/code/machine-control` checkout's common CLI and platform
+guides as the preferred source for device and VM control. Read its
+`platforms/chromeos/skills/SKILL.md` before physical ChromeOS work and
+[this project's hardware topic](docs/topics/chromeos-hardware-testing.md).
+Start with read-only target discovery and doctor:
 
-Start with `~/code/chromeos-testbed/bin/chromeos doctor`. Use `chromeroot` for
-the ChromeOS host, UI automation, screenshots, DevTools, extension deployment,
-and ARCVM ADB. `chromebook` is the optional Crostini container; start it only
-when Linux-container access or shared files are actually needed.
+```bash
+~/code/machine-control/bin/machine-control targets
+~/code/machine-control/bin/machine-control --target chromeos target doctor
+```
 
-Use `./scripts/deploy-chromebook.sh` for the extension and
-`./scripts/deploy-android-chromebook.sh` for the APK. Do not follow ChromeOS
-deployment procedures under `docs/archive/` without reconciling them against
-the living topic and current scripts.
+Keep concrete target endpoints, inventory and secret locators private. Verify
+exact identity and acquire the supported exclusive claim before meaningful
+use. Prefer repository tests, diagnostic CLIs and scripted smoke/capture
+runners before interactive computer control. Use semantic native/browser
+information before raw coordinates. Use owned separately identified test
+browsers, and reap their processes at completion.
+
+Record initial VM power; boot only for a prepared check, shut down between
+uses and release claims after finally cleanup. Waiting for builds or approvals
+does not justify an idle VM. Preserve physical ChromeOS appliance power policy
+and inherited production profiles/data. Keep generic transport, screenshots,
+ARCVM ADB, DevTools, Crostini and recovery in Machine Control; project builds,
+assertions and fixtures stay here. Legacy `*-testbed` checkouts are read-only
+history unless documented as generated distributions. Existing deployment
+convenience scripts still target that legacy interface; reconcile them with
+the current controller rather than treating them as authority.
 
 ## Documentation Ownership
 

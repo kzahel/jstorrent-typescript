@@ -2,210 +2,142 @@
 
 Topic: chromeos-hardware-testing
 
-Status: active and functional
+Status: current controller ownership; product evidence retains its exact source.
 
-Last reconciled: 2026-07-24
+Last reconciled: 2026-10-08
 
-## Authority
+## Authority and tool selection
 
-The physical-device controller is the separate
-[`kzahel/chromeos-testbed`](https://github.com/kzahel/chromeos-testbed)
-repository, normally cloned at `~/code/chromeos-testbed`.
+The preferred public source is
+[Machine Control](https://github.com/kzahel/machine-control), normally available
+in the sibling checkout `~/code/machine-control`. Read its
+[ChromeOS platform skill](https://github.com/kzahel/machine-control/blob/main/platforms/chromeos/skills/SKILL.md)
+and [common CLI guide](https://github.com/kzahel/machine-control/blob/main/docs/cli-guide.md)
+before a hardware session. The former `chromeos-testbed` repository is read-only
+history unless explicitly documented as a generated distribution.
 
-Its `skills/SKILL.md` is the operational reference for screenshots, precise
-pointer and OCR control, ChromeOS accessibility, Chrome DevTools, ARCVM ADB,
-Crostini, diagnostics, reboot recovery, and closed-lid operation. JSTorrent
-owns only its project-specific build and deployment entry points. Do not copy
-the testbed implementation into this repository.
+Keep generic device transport, desktop/browser control, captures, DevTools,
+ARCVM ADB, Crostini and recovery in Machine Control. This repository owns
+JSTorrent builds, controlled fixtures, product assertions and result records.
+Do not copy the controller implementation or private inventory here.
 
-Documents under `docs/archive/` describe earlier workflows and are not current
-authority. In particular, current extension and APK deployment do not require
-Crostini.
+Use unit/integration tests, diagnostic CLIs and scripted runners first when
+they expose the required behavior. Real window/input/presentation tests may
+need native accessibility or browser control; inspect semantic state before
+coordinates. Use a separate test browser for automated browser checks and
+reap it afterward. A delivered action is not evidence of the expected effect.
 
-## Host Roles
+## Session ownership and cleanup
 
-| Alias | Role | Use |
-| --- | --- | --- |
-| `chromeroot` | ChromeOS host, root SSH on port 2223 | Testbed CLI, UI, screenshots, DevTools, extension files, ARCVM ADB |
-| `chromebook` | Optional `penguin` Crostini container on port 2222 | Linux shell, `scp`/`rsync`, and folders shared with Linux |
-
-Start every hardware session from the JSTorrent development machine:
-
-```bash
-TESTBED=~/code/chromeos-testbed/bin/chromeos
-"$TESTBED" doctor
-```
-
-`doctor` verifies whether SSH was genuinely restored by the current boot's
-network-ready trigger. It does not mistake a manual VT2 start for verified
-reboot persistence.
-
-## Extension Workflow
-
-Build, deploy directly into ChromeOS Downloads, and reload the unpacked
-extension when DevTools is available:
+Start with read-only discovery and the selected target's doctor:
 
 ```bash
-./scripts/deploy-chromebook.sh
+mc=~/code/machine-control/bin/machine-control
+"$mc" targets
+"$mc" --target chromeos target doctor
 ```
 
-The script delegates device work to:
+The target selector is configured privately; it is not an SSH address or a
+credential. Verify exact identity and acquire the supported exclusive claim
+before meaningful use, following the common CLI guide. Claims may not be
+supported by every appliance adapter; record that capability explicitly.
+
+Record initial VM power and owned test state. Boot a VM only for its prepared
+check, shut it down between uses, and release claims in finally cleanup.
+Build/approval waits are not active VM use. Join owned services, reap test
+browsers, close forwarding/listener processes and remove only owned fixtures.
+Preserve inherited production profiles, downloads and app data. Do not change
+the dedicated physical ChromeOS appliance's idle/lid availability policy as
+part of testing or cleanup.
+
+## Project build and deployment boundary
+
+Build the intended extension package with its project command, then delegate
+platform deployment through the current common interface:
 
 ```bash
-~/code/chromeos-testbed/bin/chromeos deploy-ext \
-  extension/dist \
-  --name jstorrent-extension \
-  --reload dbokmlpefliilbjldladbimlcfgbolhk
+"$mc" --target chromeos testbed -- deploy-ext extension/dist \
+  --name jstorrent-extension --reload dbokmlpefliilbjldladbimlcfgbolhk
 ```
 
-The first load remains manual: enable developer mode in
-`chrome://extensions`, choose **Load unpacked**, and select
-`Downloads/jstorrent-extension`. Subsequent deployments can reload the
-installed development extension through CDP.
+Only use the target/package identity and replacement scope prepared for that
+session. First unpacked loading may require native Chrome UI. Verify the
+observed extension version and pairing result; an unpacked development install
+is not preserved-profile Chrome Web Store update evidence.
 
-For visual or behavioral assertions, use semantic desktop/browser operations
-before raw coordinates:
+Build Android with the normal Gradle command and selected identity/signature,
+then delegate APK installation:
 
 ```bash
-"$TESTBED" screenshot
-"$TESTBED" targets
-"$TESTBED" desktop-tree --depth 3
-"$TESTBED" screen-find-text 'JSTorrent|Install|Open'
+"$mc" --target chromeos testbed -- install-apk path/to/owned-candidate.apk
 ```
 
-## Android Companion Workflow
+ADB authorization may show a real ChromeOS prompt. Follow the platform guide
+and approve only an observed prompt; ordinary doctor deliberately does not
+probe ADB. Never uninstall or clear an inherited production app to work around
+a signature mismatch. Keep APK-development installation separate from actual
+Play-managed delivery and verify the latter's installer/certificate/identity.
 
-Build and install the ChromeOS companion APK through ARCVM ADB:
+`scripts/deploy-chromebook.sh` and `scripts/deploy-android-chromebook.sh` still
+use legacy CLI/SSH aliases and unowned tunnel helpers. They are compatibility
+conveniences, not the preferred controller or cleanup contract; they have not
+been migrated in this documentation slice. Use Machine Control and task-owned
+forwarding from its guide rather than assuming those scripts qualify a current
+restoring session. Keep actual target routes and secret locators private.
+
+For captures and diagnostics, the current platform bridge includes:
 
 ```bash
-./scripts/deploy-android-chromebook.sh
+"$mc" --target chromeos testbed -- desktop-tree --depth 3
+"$mc" --target chromeos testbed -- screenshot path/to/owned-capture.png
+"$mc" --target chromeos testbed -- diagnostics
 ```
 
-The script delegates installation to `chromeos install-apk --authorize`.
-ChromeOS may show a USB-debugging authorization prompt after a reboot or ARCVM
-restart; the testbed can approve the visible prompt, but the prompt must
-actually be present.
+## Play and fresh-install acceptance
 
-Use `--forward` when the Android app must reach a development server on this
-machine:
+Use a dedicated explicitly disposable installation for fresh-install testing;
+retained production upgrade testing preserves the installed app and data.
+A real Play flow must follow the extension's store handoff, install through
+Play, verify its installer and managed signing identity, launch/pair through
+the actual chooser, add a real SAF root and verify independent payload hashes.
+An ADB APK install cannot substitute for that store leg.
 
-```bash
-./scripts/deploy-android-chromebook.sh --forward
-```
+Use unique fixture roots. Uninstalling an owned disposable app does not imply
+permission to remove shared downloads; never recursively clear that directory.
+Torrent removal and file deletion are separate assertions. APK development
+can repeat chooser/pairing/SAF/transfer checks while explicitly excluding store
+qualification. Preserve all earlier exact-version evidence below as historical.
 
-## Fresh-Install Acceptance Flow
+## Crostini and recovery
 
-The physical acceptance test should cover the user-visible boundary that the
-emulator companion smoke test deliberately skips:
+Crostini is needed only for Linux-container assertions or shared-folder work.
+Use the current Machine Control platform/native controls and ordinary Terminal
+startup, then observe registration, connection, folder access and independent
+bytes. The former `crostini-status/start/stop` commands are not present in the
+current platform CLI and must not be treated as supported current commands.
+Do not invent an administrative `vmc`/LXD shortcut as product startup evidence.
 
-1. Start signed in with the MV3 extension and `com.jstorrent.app` absent.
-2. Deploy and load `extension/dist` as an unpacked extension.
-3. Open JSTorrent, expose **Setup Required**, and follow **Get from Play
-   Store** into the native Play Store listing.
-4. Install the APK, then verify through ADB that the installer is
-   `com.android.vending`.
-5. Return to the extension, choose **Launch App**, accept Chrome's app chooser,
-   and approve the Android pairing request.
-6. Add a download root through the Storage Access Framework, including both
-   **Use this folder** and **Allow**.
-7. Require the extension to reach **Ready**, download the deterministic 100 MiB
-   fixture from `seed_for_test.py`, and compare the source and device SHA-256
-   values.
+Reboot and OS-update recovery belong to the current platform guide. Routine
+read-only doctor comes first. A signed-out profile, unreachable transport,
+missing DevTools and a replaced root image are distinct states; repeated
+reboots or Chrome restarts are not a generic repair. Stored credentials remain
+in their approved secret transport and are never printed or passed in command
+arguments. Root-image transitions and physical sign-in retain their explicit
+controller boundaries.
 
-The Play Store leg should remain a separate, lower-frequency acceptance test.
-The faster APK-development variant can replace steps 3-4 with a fresh
-`./scripts/deploy-android-chromebook.sh` install while retaining the chooser,
-pairing, SAF, transfer, and hash assertions.
+## Historical product evidence
 
-Uninstalling the APK clears private app state but not
-`Download/JSTorrent`. A deterministic fresh-install runner must use a unique
-test root or remove only its own named fixture. Do not recursively clear the
-shared download directory. Likewise, toolbar **Remove** currently removes the
-torrent from the session but leaves its downloaded file in place.
+The 2026-07-24 exploratory physical run passed extension 1.1.1 / Play app
+1.0.23 fresh installation, chooser/pairing/SAF and an independently verified
+100-MiB transfer. Web-to-native handoff could leave Chrome in front; actual
+chooser and Android surfaces sometimes needed native UI/pointer fallbacks.
+See [the fresh-install record](../archive/reports/2026-07-24-chromeos-fresh-install-exploratory-test.md).
 
-The 2026-07-24 exploratory physical run passed this flow with extension 1.1.1,
-Play Store app 1.0.23, and a hash-verified 100 MiB transfer. It also established
-that the web-to-native Play Store handoff can leave Chrome in front, the launch
-intent produces an **Open with** confirmation, and Play Store/Android surfaces
-sometimes require desktop accessibility or absolute-pointer fallbacks. See
-[`../archive/reports/2026-07-24-chromeos-fresh-install-exploratory-test.md`](../archive/reports/2026-07-24-chromeos-fresh-install-exploratory-test.md).
+The same day's no-Play run used the then-public Crostini installer, ordinary
+Terminal startup and observable host registration/health before automatic
+extension discovery reached Ready. Linux payload transfer and actual ChromeOS
+Flex remained separate gaps. See [the Crostini record](../archive/reports/2026-07-24-chromeos-crostini-no-play-store-test.md).
 
-## Optional Crostini
-
-Crostini is not part of normal extension or APK deployment. Start it only for
-Linux-container work or ChromeOS folders explicitly shared with Linux:
-
-```bash
-"$TESTBED" crostini-status
-"$TESTBED" crostini-start
-ssh chromebook
-"$TESTBED" crostini-stop
-```
-
-`crostini-start` launches the user-facing Terminal app, selects its `penguin`
-profile, requires ChromeOS to register `penguin.linux.test`, restores the
-post-reboot port-forwarding rule, and verifies authenticated `ssh chromebook`.
-
-The extension's no-Play-Store product route additionally requires the
-published installer. Run the exact user-facing command from that Terminal:
-
-```bash
-curl -fsSL https://jstorrent.com/install-crostini.sh | bash
-```
-
-The testbed deliberately does not start the container through `vmc` or LXD,
-because that lower-level route can leave `cros-garcon` without a security
-token, hostname resolution, or localhost tunneling. For a product assertion,
-still require both of these checks before opening the extension:
-
-```bash
-curl -fsS http://localhost:7800/health
-curl -fsS http://penguin.linux.test:7800/health
-```
-
-The 2026-07-24 physical run started with no installed daemon or pairing state,
-ran the exact public installer, force-stopped Android, cleared extension
-companion state, reset daemon pairing, and reopened the extension. Automatic
-discovery and pairing reached **Ready** at `penguin.linux.test:7800`; the panel
-reported **Crostini Daemon** and the fixed `Downloads` root. Installer syntax,
-published asset availability, fallback checksums, and local integrity tests
-also passed. A torrent payload transfer and actual ChromeOS Flex hardware
-remain separate coverage gaps. See
-[`../archive/reports/2026-07-24-chromeos-crostini-no-play-store-test.md`](../archive/reports/2026-07-24-chromeos-crostini-no-play-store-test.md).
-
-## Reboots and Updates
-
-Ordinary open- or closed-lid reboots are unattended on the configured Lenovo
-testbed. Root SSH starts after ChromeOS emits `shill-connected`; the machine
-can remain closed and still provide screenshots, OCR, accessibility, and the
-absolute pointer.
-
-ChromeOS updates can replace the rootfs boot job and DevTools configuration.
-If `ssh chromeroot` does not return, recover once from VT2:
-
-```bash
-sudo -i
-bash /mnt/stateful_partition/etc/ssh/start_sshd.sh
-```
-
-Then run `chromeos doctor`, re-run the current bootstrap if requested, and use
-`chromeos fix-devtools` if the update reset remote debugging.
-
-## Validation
-
-For infrastructure-only checks:
-
-```bash
-"$TESTBED" doctor
-```
-
-For a restoring end-to-end UI exercise with screenshots and machine-readable
-evidence:
-
-```bash
-"$TESTBED" smoke-test
-```
-
-Use JSTorrent-specific assertions after the infrastructure passes. Record the
-testbed command, target build, and artifact path in the relevant topic or
-change report.
+These records establish their dated artifacts and controller behavior, not
+current replacement qualification. Current Rust replacement evidence belongs
+to the replacement repository's cutover checklist and restoring runners.

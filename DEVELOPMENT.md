@@ -8,8 +8,8 @@ indexed from [`docs/README.md`](docs/README.md).
 ## Prerequisites
 
 - Git with submodule support
-- Node.js 20 or newer
-- pnpm 9 through Corepack
+- Node.js 24 or newer
+- pnpm 11 or newer; use the version pinned in `package.json`
 - Platform toolchains for the component being changed:
   - Rust stable for `desktop/`
   - JDK 17 and the Android SDK for `android/`
@@ -116,6 +116,26 @@ Build the extension once and load `extension/dist` from
 - [Search plugin SDK](packages/plugin-sdk/README.md)
 - [Website development](website/README.md)
 - [Release operations](docs/topics/releases.md)
+
+## Machine Testbeds
+
+Use the sibling Machine Control common CLI and platform guides for physical
+devices and VMs; its [CLI guide](https://github.com/kzahel/machine-control/blob/main/docs/cli-guide.md)
+owns identity, readiness, exclusive claims and cleanup. Start read-only:
+
+```bash
+~/code/machine-control/bin/machine-control targets
+~/code/machine-control/bin/machine-control --target chromeos target doctor
+```
+
+Choose the concrete target through private configuration. Use deterministic
+project runners first; use native UI/browser control when actual presentation,
+focus or OS routing requires it. Restore owned fixtures, join processes, stop
+listeners/forwards and release claims in finally cleanup. Record initial VM
+power and shut VMs down between ready checks, including build/approval waits.
+Preserve inherited production data and the physical appliance power policy.
+See [ChromeOS hardware testing](docs/topics/chromeos-hardware-testing.md) for
+project-specific evidence and the boundary with legacy convenience scripts.
 
 ## CI
 
