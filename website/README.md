@@ -16,6 +16,17 @@ pnpm --filter jstorrent-website preview
 
 The development server uses <http://localhost:3000>.
 
+Run the hosted feedback/uninstall security checks from the repository root:
+
+```bash
+node --test tests/hosted-context.test.mjs
+```
+
+`public/product-context.js` accepts bounded known query fields and renders them
+as text. Preserve the existing Google Form destinations and analytics recipient;
+never test these pages by submitting a form. Changing hosted copy locally does
+not establish public deployment or authorize enabling additional client context.
+
 ## Source Map
 
 - `src/pages/`: Astro routes, client page, blog, and RSS

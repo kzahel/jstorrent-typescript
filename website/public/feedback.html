@@ -108,6 +108,18 @@
         margin-bottom: 2rem;
       }
 
+      .context-disclosure {
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-secondary);
+        overflow-wrap: anywhere;
+      }
+
+      .context-disclosure a {
+        color: var(--accent);
+      }
+
       .content h2 {
         font-family: 'JetBrains Mono', monospace;
         font-size: 1.25rem;
@@ -146,6 +158,8 @@
 
       .info-item {
         color: var(--text-secondary);
+        min-width: 0;
+        overflow-wrap: anywhere;
       }
 
       .info-item span {
@@ -230,13 +244,19 @@
         </p>
 
         <div style="display: none" class="system-info" id="system-info">
-          <div class="system-info-title">System Information (auto-detected)</div>
+          <div class="system-info-title">Context from the app</div>
           <div class="system-info-grid" id="system-info-grid">
             <!-- Populated by JavaScript from URL params -->
           </div>
         </div>
 
         <h2>Send Feedback</h2>
+        <p class="context-disclosure">
+          Opening this page can share URL context with website logs, the embedded Google Form and
+          website analytics before you submit a form. Review any displayed context and your response
+          before submitting. <a href="/privacy.html">Privacy policy</a>.
+        </p>
+
         <div class="form-container">
           <iframe
             id="feedback-form"
@@ -264,109 +284,24 @@
       </footer>
     </div>
 
+    <script src="/product-context.js"></script>
     <script>
-      // Parse URL parameters and display system info
-      ;(function () {
-        const params = new URLSearchParams(window.location.search)
-        const infoGrid = document.getElementById('system-info-grid')
-        const infoContainer = document.getElementById('system-info')
-        const formIframe = document.getElementById('feedback-form')
-
-        // Platform detection
-        function detectPlatform() {
-          const ua = navigator.userAgent
-          // Check URL param first (for Android app linking)
-          const platformParam = params.get('platform')
-          if (platformParam) return platformParam
-          // Browser detection
-          if (ua.includes('CrOS')) return 'chromeos'
-          if (ua.includes('Macintosh') || ua.includes('Mac OS X')) return 'mac'
-          if (ua.includes('Windows')) return 'win'
-          if (ua.includes('Linux')) return 'linux'
-          return 'unknown'
-        }
-
-        // Get Chrome version from user agent
-        function getChromeVersion() {
-          const match = navigator.userAgent.match(/Chrome\/(\d+)/)
-          return match ? match[1] : null
-        }
-
-        // Labels for URL params → display names
-        // Ordered: environment first, then engine, then usage
-        const infoLabels = {
-          platform: 'Platform',
-          v: 'App Version',
-          backend: 'Backend',
-          backendV: 'Backend Version',
-          status: 'Status',
-          chrome: 'Chrome',
-          android: 'Android',
-          device: 'Device',
-          engine: 'Engine',
-          error: 'Last Error',
-          torrents: 'Torrents',
-          active: 'Active',
-          peers: 'Peers',
-          dht: 'DHT',
-          upnp: 'UPnP',
-          port: 'Port',
-          errored: 'Errored',
-          uptime: 'Uptime',
-          sessions: 'Sessions',
-          added: 'Added',
-          completed: 'Completed',
-          devices: 'Devices',
-          days: 'Days Installed',
-        }
-
-        const displayInfo = []
-        const metricsParts = []
-
-        // Add platform (detect from UA if not in params)
-        const platform = detectPlatform()
-        displayInfo.push({ label: 'Platform', value: platform })
-        metricsParts.push(`platform=${platform}`)
-
-        // Add Chrome version if in browser
-        const chromeVersion = params.get('chrome') || getChromeVersion()
-        if (chromeVersion) {
-          displayInfo.push({ label: 'Chrome', value: chromeVersion })
-          metricsParts.push(`chrome=${chromeVersion}`)
-        }
-
-        // Add all other URL params
-        for (const [key, label] of Object.entries(infoLabels)) {
-          if (key === 'platform' || key === 'chrome') continue // Already handled
-          const value = params.get(key)
-          if (value !== null) {
-            displayInfo.push({ label, value })
-            metricsParts.push(`${key}=${value}`)
-          }
-        }
-
-        // Include user-agent in form pre-fill but not in display grid (too long)
-        const ua = params.get('ua')
-        if (ua) metricsParts.push(`ua=${ua}`)
-
-        // Show system info if we have any
-        if (displayInfo.length > 0) {
-          infoContainer.style.display = 'block'
-          infoGrid.innerHTML = displayInfo
-            .map((info) => `<div class="info-item">${info.label}: <span>${info.value}</span></div>`)
-            .join('')
-        }
-
-        // Pre-populate the System Information field (entry.2074805438)
-        const metricsString = metricsParts.join(', ')
-        if (formIframe && metricsString) {
-          const baseUrl =
-            'https://docs.google.com/forms/d/e/1FAIpQLSeIfq56PdO5Wq_dusk32gZpM2y9DaGQW7LYHO-yLqZjsL2YuA/viewform'
-          const formParams = new URLSearchParams({
-            embedded: 'true',
-            'entry.2074805438': metricsString,
-          })
-          formIframe.src = `${baseUrl}?${formParams.toString()}`
+      ;(() => {
+        const entries = window.JSTorrentHostedContext.parse(window.location.search, 'feedback')
+        const container = document.getElementById('system-info')
+        window.JSTorrentHostedContext.render(
+          document.getElementById('system-info-grid'),
+          entries,
+          'info-item',
+        )
+        container.style.display = entries.length ? 'block' : 'none'
+        const form = document.getElementById('feedback-form')
+        const context = entries.map((item) => item.key + '=' + item.value).join(', ')
+        if (form && context) {
+          const query = new URLSearchParams({ embedded: 'true', 'entry.2074805438': context })
+          form.src =
+            'https://docs.google.com/forms/d/e/1FAIpQLSeIfq56PdO5Wq_dusk32gZpM2y9DaGQW7LYHO-yLqZjsL2YuA/viewform?' +
+            query
         }
       })()
     </script>

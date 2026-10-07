@@ -113,6 +113,18 @@
         margin-bottom: 2rem;
       }
 
+      .context-disclosure {
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-secondary);
+        overflow-wrap: anywhere;
+      }
+
+      .context-disclosure a {
+        color: var(--accent);
+      }
+
       .content h2 {
         font-family: 'JetBrains Mono', monospace;
         font-size: 1.25rem;
@@ -151,6 +163,8 @@
 
       .stat-item {
         color: var(--text-secondary);
+        min-width: 0;
+        overflow-wrap: anywhere;
       }
 
       .stat-item span {
@@ -213,6 +227,12 @@
         </div>
 
         <h2>Quick Feedback</h2>
+        <p class="context-disclosure">
+          Opening this page can share URL context with website logs, the embedded Google Form and
+          website analytics before you submit a form. Review any displayed context and your response
+          before submitting. <a href="/privacy.html">Privacy policy</a>.
+        </p>
+
         <div class="form-container">
           <iframe
             src="https://docs.google.com/forms/d/e/1FAIpQLSda66NBj22jMu1fBYnpAdC07E7dJaO4l-zG46I6_oQmazn-Pw/viewform?embedded=true"
@@ -232,91 +252,24 @@
       </footer>
     </div>
 
+    <script src="/product-context.js"></script>
     <script>
-      // Parse URL parameters, detect platform, and pre-populate form
-      ;(function () {
-        const params = new URLSearchParams(window.location.search)
-        const statsGrid = document.getElementById('stats-grid')
-        const statsContainer = document.getElementById('stats')
-        const formIframe = document.querySelector('.form-container iframe')
-
-        // Platform detection (matches extension/src/lib/platform.ts)
-        function detectPlatform() {
-          const ua = navigator.userAgent
-          if (ua.includes('CrOS')) return 'chromeos'
-          if (ua.includes('Macintosh') || ua.includes('Mac OS X')) return 'mac'
-          if (ua.includes('Windows')) return 'win'
-          if (ua.includes('Linux')) return 'linux'
-          return 'unknown'
-        }
-
-        // Get Chrome version from user agent
-        function getChromeVersion() {
-          const match = navigator.userAgent.match(/Chrome\/(\d+)/)
-          return match ? match[1] : 'unknown'
-        }
-
-        const statLabels = {
-          v: 'Version',
-          days: 'Days Installed',
-          connected: 'Connected',
-          downloads: 'Downloads',
-          added: 'Torrents Added',
-          sessions: 'Sessions',
-          devices: 'Devices',
-        }
-
-        const displayStats = []
-
-        for (const [key, label] of Object.entries(statLabels)) {
-          const value = params.get(key)
-          if (value !== null) {
-            displayStats.push({ label, value })
-          }
-        }
-
-        if (displayStats.length === 0) {
-          statsContainer.style.display = 'none'
-        } else {
-          statsGrid.innerHTML = displayStats
-            .map((stat) => `<div class="stat-item">${stat.label}: <span>${stat.value}</span></div>`)
-            .join('')
-        }
-
-        // Build system metrics string for form pre-population
-        const platform = detectPlatform()
-        const chromeVersion = getChromeVersion()
-
-        const metricsParts = [`platform=${platform}`, `chrome=${chromeVersion}`]
-
-        // Add URL params to metrics string
-        for (const key of [
-          'v',
-          'days',
-          'connected',
-          'downloads',
-          'added',
-          'sessions',
-          'devices',
-          'id',
-        ]) {
-          const value = params.get(key)
-          if (value !== null) {
-            metricsParts.push(`${key}=${value}`)
-          }
-        }
-
-        const metricsString = metricsParts.join(', ')
-
-        // Pre-populate the System Information field (entry.463917333)
-        if (formIframe && metricsString) {
-          const baseUrl =
-            'https://docs.google.com/forms/d/e/1FAIpQLSda66NBj22jMu1fBYnpAdC07E7dJaO4l-zG46I6_oQmazn-Pw/viewform'
-          const formParams = new URLSearchParams({
-            embedded: 'true',
-            'entry.463917333': metricsString,
-          })
-          formIframe.src = `${baseUrl}?${formParams.toString()}`
+      ;(() => {
+        const entries = window.JSTorrentHostedContext.parse(window.location.search, 'uninstall')
+        const container = document.getElementById('stats')
+        window.JSTorrentHostedContext.render(
+          document.getElementById('stats-grid'),
+          entries,
+          'stat-item',
+        )
+        container.style.display = entries.length ? 'block' : 'none'
+        const form = document.querySelector('iframe')
+        const context = entries.map((item) => item.key + '=' + item.value).join(', ')
+        if (form && context) {
+          const query = new URLSearchParams({ embedded: 'true', 'entry.463917333': context })
+          form.src =
+            'https://docs.google.com/forms/d/e/1FAIpQLSda66NBj22jMu1fBYnpAdC07E7dJaO4l-zG46I6_oQmazn-Pw/viewform?' +
+            query
         }
       })()
     </script>
