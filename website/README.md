@@ -116,3 +116,13 @@ Review phone/wide Windows, Mac and both Linux architecture choices before an
 approved website deployment. A local disabled build or controlled fixture screen
 is preparation, not public delivery evidence. Pushing relevant `main` changes
 also deploys the website and requires an explicit instruction.
+
+## Fragment and narrow-width presentation
+
+The website now realigns an initial fragment after the client-only Downloads
+island mounts and fonts settle. This also corrects FAQ links displaced by that
+insertion. Sticky-header scroll spacing keeps headings visible; at320px the
+header controls use a second row, long release-note tokens wrap, and the retained
+FAQ command scrolls horizontally within its answer. Actual hero, direct Download
+and direct FAQ navigation passes at320/390/1200px in a fresh synthetic-enabled
+static build. The real descriptor stays disabled; no public deployment occurs.

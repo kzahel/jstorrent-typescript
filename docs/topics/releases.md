@@ -58,6 +58,17 @@ this does not clear unrelated retired-workspace findings or establish public
 deployment. Normal relevant `main` changes still deploy through the existing
 website workflow; local commits do not authorize that push.
 
+
+## Fragment and narrow-width presentation
+
+The website now realigns an initial fragment after the client-only Downloads
+island mounts and fonts settle. This also corrects FAQ links displaced by that
+insertion. Sticky-header scroll spacing keeps headings visible; at320px the
+header controls use a second row, long release-note tokens wrap, and the retained
+FAQ command scrolls horizontally within its answer. Actual hero, direct Download
+and direct FAQ navigation passes at320/390/1200px in a fresh synthetic-enabled
+static build. The real descriptor stays disabled; no public deployment occurs.
+
 ## Engine and Plugin SDK
 
 Both npm releases require a matching changelog entry and update their package

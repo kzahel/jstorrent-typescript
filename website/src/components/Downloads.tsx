@@ -249,6 +249,22 @@ export default function Downloads({ tauriAppTag, productionRelease = null }: Dow
     checkExtension()
   }, [])
 
+  // Direct fragments can precede this client-only island. Its insertion also
+  // shifts FAQ anchors below it, so align the current fragment after layout.
+  useEffect(() => {
+    let cancelled = false
+    const hash = location.hash
+    if (!hash) return
+    document.fonts.ready.then(() => {
+      if (cancelled || location.hash !== hash) return
+      const target = document.getElementById(hash.slice(1))
+      target?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const copyToClipboard = () => {
     const command = 'curl -fsSL https://jstorrent.com/install.sh | bash'
     navigator.clipboard.writeText(command).then(() => {
