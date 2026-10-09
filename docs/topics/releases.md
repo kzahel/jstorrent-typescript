@@ -69,6 +69,17 @@ FAQ command scrolls horizontally within its answer. Actual hero, direct Download
 and direct FAQ navigation passes at320/390/1200px in a fresh synthetic-enabled
 static build. The real descriptor stays disabled; no public deployment occurs.
 
+
+## Chromebook Linux recovery copy
+
+The curated successor view's No Play Store FAQ now offers the native AppImage,
+best-effort compatibility guidance and explicitly labeled headless setup from
+source. It explains separate Android/Linux libraries and does not advertise
+legacy daemon attachment. Disabled production metadata retains the legacy
+answer and links. Fresh enabled/disabled builds,24 inventory guards, tracked
+docs and320/390/1200 fragment captures pass; the disabled answer's normalized
+text and links match the original exactly. No website is deployed.
+
 ## Engine and Plugin SDK
 
 Both npm releases require a matching changelog entry and update their package

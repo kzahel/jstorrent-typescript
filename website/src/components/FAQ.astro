@@ -1,5 +1,5 @@
 ---
-import { sourceRepositoryUrl } from '../lib/production-site'
+import { productionSiteRelease, sourceRepositoryUrl } from '../lib/production-site'
 ---
 
 <section id="help" class="section">
@@ -149,31 +149,59 @@ import { sourceRepositoryUrl } from '../lib/production-site'
       <details class="faq-item" id="no-play-store">
         <summary><a href="#no-play-store" class="faq-anchor" aria-hidden="true">#</a>My Chromebook doesn't have the Play Store. Can I still use JSTorrent?</summary>
         <div class="faq-answer">
-          <p>
-            Yes! Some Chromebooks (especially those running ChromeOS Flex) don't have access to the
-            Google Play Store. You can use JSTorrent by installing the Chrome extension paired with
-            a lightweight background daemon running in Linux (Crostini).
-          </p>
-          <ol>
-            <li>
-              Enable Linux on your Chromebook: go to
-              <strong>Chrome Settings &rarr; About ChromeOS &rarr; Linux development environment</strong>
-              and follow the prompts to set it up.
-            </li>
-            <li>
-              Open the Linux terminal and run:
-              <pre><code>curl -fsSL https://jstorrent.com/install-crostini.sh | bash</code></pre>
-            </li>
-            <li>
-              Install the
-              <a href="https://chromewebstore.google.com/detail/jstorrent/dbokmlpefliilbjldladbimlcfgbolhk">Chrome extension</a>
-              from the Chrome Web Store. It will automatically connect to the daemon.
-            </li>
-          </ol>
-          <p>
-            Files download to your Linux <code>~/Downloads</code> folder by default. To uninstall
-            the daemon later, run the same script with <code>--uninstall</code>.
-          </p>
+          {productionSiteRelease ? (
+            <>
+              <p>
+                You can use JSTorrent in your Chromebook's Linux development environment
+                if it supports the Linux desktop app. Linux support is best effort.
+              </p>
+              <ol>
+                <li>
+                  Enable Linux in{' '}
+                  <strong>Chrome Settings &rarr; About ChromeOS &rarr; Linux development environment</strong>.
+                </li>
+                <li>
+                  Choose your Linux architecture in <a href="#download">Download</a>,
+                  then download and open the JSTorrent AppImage. You can use the desktop
+                  app directly without the Chrome extension.
+                </li>
+              </ol>
+              <p>
+                If the desktop app cannot start in your Linux environment, see
+                <a href={`${sourceRepositoryUrl}/blob/main/DEVELOPMENT.md#packaging-and-running-the-linux-headless-service`}>headless setup from source</a>.
+                This requires building and configuring the service; it is not a separate
+                published download. Android and Linux libraries are separate.
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                Yes! Some Chromebooks (especially those running ChromeOS Flex) don't have access to the
+                Google Play Store. You can use JSTorrent by installing the Chrome extension paired with
+                a lightweight background daemon running in Linux (Crostini).
+              </p>
+              <ol>
+                <li>
+                  Enable Linux on your Chromebook: go to
+                  <strong>Chrome Settings &rarr; About ChromeOS &rarr; Linux development environment</strong>
+                  and follow the prompts to set it up.
+                </li>
+                <li>
+                  Open the Linux terminal and run:
+                  <pre><code>curl -fsSL https://jstorrent.com/install-crostini.sh | bash</code></pre>
+                </li>
+                <li>
+                  Install the
+                  <a href="https://chromewebstore.google.com/detail/jstorrent/dbokmlpefliilbjldladbimlcfgbolhk">Chrome extension</a>
+                  from the Chrome Web Store. It will automatically connect to the daemon.
+                </li>
+              </ol>
+              <p>
+                Files download to your Linux <code>~/Downloads</code> folder by default. To uninstall
+                the daemon later, run the same script with <code>--uninstall</code>.
+              </p>
+            </>
+          )}
         </div>
       </details>
     </div>
