@@ -86,7 +86,10 @@ The old published downloads continue until a separately approved cutover.
 Before activation, qualify and publish the exact immutable replacement capsule.
 Record its canonical version and `desktop-v<version>` tag, repository
 `kzahel/rstorrent`, full source SHA, original updater key ID
-`415D3DF4B3D0CFB8`, and all 23 asset names, byte lengths and SHA-256 values.
+`415D3DF4B3D0CFB8`, and all 15 asset names, byte lengths and SHA-256 values.
+The first replacement's Linux offering is AppImage-only on both architectures;
+production DEB/RPM entries are rejected. Existing legacy discovery/downloads
+remain unchanged while the descriptor is disabled.
 The production publisher is currently intentionally disabled; a signed candidate
 build does not establish publication. Do not enable this descriptor for a preview,
 synthetic fixture or an unavailable asset.
@@ -96,7 +99,9 @@ wrong-product, malformed or mismatched metadata. Metadata validation does not
 verify file bytes, signatures or public availability. Those checks must precede
 setting `qualified` and explicitly enabling the descriptor in a reviewed commit.
 The enabled view pins every download to this capsule, uses actual macOS DMGs,
-and offers direct Linux packages without the legacy installer command. Source and CI links
+and offers both Linux AppImages without the legacy installer command. Linux
+support is best effort; the headless fallback links explicitly to setup from
+source rather than promising an unpromoted public package. Source and CI links
 select the matching repository; existing support recipients are retained. Late
 legacy release discovery cannot replace these curated links.
 

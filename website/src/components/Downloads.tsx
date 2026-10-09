@@ -338,6 +338,16 @@ export default function Downloads({ tauriAppTag, productionRelease = null }: Dow
 
             {selectedPlatform === 'linux' && (
               <>
+                {productionRelease && (
+                  <p>
+                    Linux desktop support is best effort. These AppImages run without a system-wide
+                    install. For a setup without the desktop window, see{' '}
+                    <a href="https://github.com/kzahel/rstorrent/blob/main/DEVELOPMENT.md#packaging-and-running-the-linux-headless-service">
+                      headless setup from source
+                    </a>
+                    .
+                  </p>
+                )}
                 {!productionRelease && (
                   <>
                     <p>Install via terminal (auto-detects .deb / .rpm / AppImage):</p>
@@ -356,24 +366,28 @@ export default function Downloads({ tauriAppTag, productionRelease = null }: Dow
                   </>
                 )}
                 <div className="btn-group">
-                  <a
-                    href={isArm64 ? tauri.linuxArm64DebUrl : tauri.linuxDebUrl}
-                    className="btn btn-secondary"
-                  >
-                    .deb — {isArm64 ? 'ARM64' : 'x86_64'} ({tauri.tag})
-                  </a>
+                  {!productionRelease && (
+                    <a
+                      href={isArm64 ? tauri.linuxArm64DebUrl : tauri.linuxDebUrl}
+                      className="btn btn-secondary"
+                    >
+                      .deb — {isArm64 ? 'ARM64' : 'x86_64'} ({tauri.tag})
+                    </a>
+                  )}
                   <a
                     href={isArm64 ? tauri.linuxArm64AppImageUrl : tauri.linuxAppImageUrl}
                     className="btn btn-secondary"
                   >
                     AppImage — {isArm64 ? 'ARM64' : 'x86_64'}
                   </a>
-                  <a
-                    href={isArm64 ? tauri.linuxDebUrl : tauri.linuxArm64DebUrl}
-                    className="btn btn-secondary"
-                  >
-                    .deb — {isArm64 ? 'x86_64' : 'ARM64'}
-                  </a>
+                  {!productionRelease && (
+                    <a
+                      href={isArm64 ? tauri.linuxDebUrl : tauri.linuxArm64DebUrl}
+                      className="btn btn-secondary"
+                    >
+                      .deb — {isArm64 ? 'x86_64' : 'ARM64'}
+                    </a>
+                  )}
                   <a
                     href={isArm64 ? tauri.linuxAppImageUrl : tauri.linuxArm64AppImageUrl}
                     className="btn btn-secondary"

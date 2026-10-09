@@ -6,9 +6,9 @@ export interface DesktopDownloadLinks {
   macosPrimaryIntelUrl: string
   macosArmUrl: string
   macosIntelUrl: string
-  linuxDebUrl: string
+  linuxDebUrl?: string
   linuxAppImageUrl: string
-  linuxArm64DebUrl: string
+  linuxArm64DebUrl?: string
   linuxArm64AppImageUrl: string
 }
 
@@ -61,11 +61,7 @@ export function selectProductionWebsiteRelease(value: unknown): DesktopDownloadL
     `JSTorrent_${version}_x64-setup.exe`,
     `JSTorrent_${version}_x64_en-US.msi`,
     `JSTorrent_${version}_amd64.AppImage`,
-    `JSTorrent_${version}_amd64.deb`,
-    `JSTorrent-${version}-1.x86_64.rpm`,
     `JSTorrent_${version}_aarch64.AppImage`,
-    `JSTorrent_${version}_arm64.deb`,
-    `JSTorrent-${version}-1.aarch64.rpm`,
     'JSTorrent_aarch64.app.tar.gz',
     'JSTorrent_x64.app.tar.gz',
   ]
@@ -107,9 +103,7 @@ export function selectProductionWebsiteRelease(value: unknown): DesktopDownloadL
     macosPrimaryIntelUrl: intel,
     macosArmUrl: arm,
     macosIntelUrl: intel,
-    linuxDebUrl: url(`JSTorrent_${version}_amd64.deb`),
     linuxAppImageUrl: url(`JSTorrent_${version}_amd64.AppImage`),
-    linuxArm64DebUrl: url(`JSTorrent_${version}_arm64.deb`),
     linuxArm64AppImageUrl: url(`JSTorrent_${version}_aarch64.AppImage`),
   }
 }

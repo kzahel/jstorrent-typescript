@@ -9,11 +9,7 @@ function qualifiedFixture() {
     `JSTorrent_${version}_x64-setup.exe`,
     `JSTorrent_${version}_x64_en-US.msi`,
     `JSTorrent_${version}_amd64.AppImage`,
-    `JSTorrent_${version}_amd64.deb`,
-    `JSTorrent-${version}-1.x86_64.rpm`,
     `JSTorrent_${version}_aarch64.AppImage`,
-    `JSTorrent_${version}_arm64.deb`,
-    `JSTorrent-${version}-1.aarch64.rpm`,
     'JSTorrent_aarch64.app.tar.gz',
     'JSTorrent_x64.app.tar.gz',
   ]
@@ -57,9 +53,7 @@ test('an enabled qualified matrix binds all platform URLs to its immutable relea
     macosPrimaryIntelUrl: 'JSTorrent_0.3.0_x64.dmg',
     macosArmUrl: 'JSTorrent_0.3.0_aarch64.dmg',
     macosIntelUrl: 'JSTorrent_0.3.0_x64.dmg',
-    linuxDebUrl: 'JSTorrent_0.3.0_amd64.deb',
     linuxAppImageUrl: 'JSTorrent_0.3.0_amd64.AppImage',
-    linuxArm64DebUrl: 'JSTorrent_0.3.0_arm64.deb',
     linuxArm64AppImageUrl: 'JSTorrent_0.3.0_aarch64.AppImage',
   }
   for (const [field, name] of Object.entries(expectedSuffixes)) {
@@ -68,7 +62,18 @@ test('an enabled qualified matrix binds all platform URLs to its immutable relea
       'https://github.com/kzahel/rstorrent/releases/download/desktop-v0.3.0/' + name,
     )
   }
+  assert.equal(qualifiedFixture().release.assets.length, 15)
+  assert.equal(links.linuxDebUrl, undefined)
+  assert.equal(links.linuxArm64DebUrl, undefined)
 })
+
+for (const name of ['JSTorrent_0.3.0_amd64.deb', 'JSTorrent-0.3.0-1.aarch64.rpm']) {
+  test(`production inventory refuses excluded ${name}`, () => {
+    const data = qualifiedFixture()
+    data.release.assets[2].name = name
+    assert.throws(() => selectProductionWebsiteRelease(data), /Invalid production asset name/)
+  })
+}
 
 test('prepared qualified metadata remains inactive until enabled', () => {
   const data = qualifiedFixture()

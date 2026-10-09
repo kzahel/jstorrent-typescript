@@ -142,13 +142,23 @@ version tag can be created with:
 
 The deploy workflow discovers the latest legacy Tauri release while
 `website/src/data/production-release.json` is disabled. The replacement handoff
-is locally prepared with a closed 23-asset inventory and original updater root.
+is locally prepared with a closed 15-asset inventory and original updater root.
 An explicitly enabled qualified descriptor overrides runtime discovery, uses
 actual macOS DMGs and removes the legacy Linux installer command. It remains
 disabled/unpopulated: final signed qualification, production publisher activation,
 public artifact verification and website deployment are separate gates.
 See [the website README](../../website/README.md) for activation invariants,
 focused guards and the distinction between metadata and byte/signature evidence.
+
+On 2026-10-09, the accepted best-effort Linux scope narrows production to both
+AppImages, excluding DEB/RPM while preserving disabled legacy behavior. All 24
+inventory guards pass. A fresh frozen-install checkout builds both disabled
+and synthetic-enabled six-page sites; eight phone/wide platform/architecture
+views pass link/layout/error checks with 16 captures. The direct inherited
+workspace build fails on an existing missing solid-js module link, so that
+failure is retained separately rather than reported as passed. Temporary
+checkout/browser/server state is removed; the actual descriptor stays
+disabled/null and no push/deployment occurs.
 
 ## Recovery Rules
 
