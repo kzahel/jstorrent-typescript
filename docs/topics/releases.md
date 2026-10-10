@@ -210,3 +210,19 @@ disabled/null and no push/deployment occurs.
 - [`ios-ci.yml`](../../.github/workflows/ios-ci.yml)
 - [`ios-finalize-release.yml`](../../.github/workflows/ios-finalize-release.yml)
 - [`deploy-website.yml`](../../.github/workflows/deploy-website.yml)
+
+## Replacement AppImage source access
+
+The prepared curated successor inventory now requires a closed, independently
+bounded source archive descriptor beside its15 core assets. Both Linux download
+choices provide adjacent source and rebuild instructions, including original
+library notices. Disabled metadata retains published legacy delivery. Final
+source archive bytes and exact AppImage bindings must be verified before
+activation; this metadata validation does not itself establish publication.
+
+On2026-10-10, the maintainer authorizes staged production cutover. The prepared
+website is ready for deployment with the curated release disabled until exact
+public desktop/source availability passes. Privacy copy now describes actual
+pseudonymous counts, optional hosted context and page recipients; release builds
+keep additional hosted context disabled. Public validation and Web Store review
+submission follow deployment. Website publication does not activate desktop feeds.

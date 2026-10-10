@@ -90,8 +90,8 @@ Record its canonical version and `desktop-v<version>` tag, repository
 The first replacement's Linux offering is AppImage-only on both architectures;
 production DEB/RPM entries are rejected. Existing legacy discovery/downloads
 remain unchanged while the descriptor is disabled.
-The production publisher is currently intentionally disabled; a signed candidate
-build does not establish publication. Do not enable this descriptor for a preview,
+The replacement publication path requires an explicit production promotion;
+a signed candidate build does not establish publication. Do not enable this descriptor for a preview,
 synthetic fixture or an unavailable asset.
 
 The build validates the closed inventory and rejects missing, duplicate,
@@ -136,3 +136,9 @@ legacy daemon attachment. Disabled production metadata retains the legacy
 answer and links. Fresh enabled/disabled builds,24 inventory guards, tracked
 docs and320/390/1200 fragment captures pass; the disabled answer's normalized
 text and links match the original exactly. No website is deployed.
+
+The curated inventory also requires `sourceMaterials`: the exact versioned
+AppImage source archive name, byte length and SHA-256. This separately bounded
+(up to2GiB) asset leaves the15 core asset guards unchanged. Both Linux download
+buttons share adjacent source/rebuild access. Verify actual source bytes and
+binary bindings before activation; disabled metadata retains legacy delivery.

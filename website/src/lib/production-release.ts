@@ -10,6 +10,7 @@ export interface DesktopDownloadLinks {
   linuxAppImageUrl: string
   linuxArm64DebUrl?: string
   linuxArm64AppImageUrl: string
+  linuxSourceUrl?: string
 }
 
 function record(value: unknown, fields: string[], label: string): Record<string, unknown> {
@@ -34,7 +35,16 @@ export function selectProductionWebsiteRelease(value: unknown): DesktopDownloadL
   }
   const release = record(
     descriptor.release,
-    ['version', 'tag', 'repository', 'sourceSha', 'updaterPublicKeyId', 'qualified', 'assets'],
+    [
+      'version',
+      'tag',
+      'repository',
+      'sourceSha',
+      'updaterPublicKeyId',
+      'qualified',
+      'assets',
+      'sourceMaterials',
+    ],
     'release',
   )
   if (
@@ -90,6 +100,17 @@ export function selectProductionWebsiteRelease(value: unknown): DesktopDownloadL
     }
   }
   if (expected.size) throw new Error('Missing production assets')
+  const sources = record(release.sourceMaterials, ['name', 'bytes', 'sha256'], 'source materials')
+  if (
+    sources.name !== `JSTorrent_${version}_AppImage-sources-final.tar.gz` ||
+    typeof sources.sha256 !== 'string' ||
+    !/^[0-9a-f]{64}$/.test(sources.sha256) ||
+    !Number.isSafeInteger(sources.bytes) ||
+    (sources.bytes as number) <= 0 ||
+    (sources.bytes as number) > 2 * 1024 * 1024 * 1024
+  ) {
+    throw new Error('Invalid AppImage source name, hash or size')
+  }
   if (!descriptor.enabled) return null
   const prefix = `https://github.com/kzahel/rstorrent/releases/download/${release.tag}/`
   const url = (name: string) => prefix + name
@@ -105,5 +126,6 @@ export function selectProductionWebsiteRelease(value: unknown): DesktopDownloadL
     macosIntelUrl: intel,
     linuxAppImageUrl: url(`JSTorrent_${version}_amd64.AppImage`),
     linuxArm64AppImageUrl: url(`JSTorrent_${version}_aarch64.AppImage`),
+    linuxSourceUrl: url(sources.name as string),
   }
 }

@@ -411,6 +411,12 @@ export default function Downloads({ tauriAppTag, productionRelease = null }: Dow
                     AppImage — {isArm64 ? 'x86_64' : 'ARM64'}
                   </a>
                 </div>
+                {productionRelease && (
+                  <p style={{ marginTop: '1rem' }}>
+                    <a href={tauri.linuxSourceUrl}>Source code and rebuild instructions</a> for both
+                    AppImages, including bundled libraries and their original notices.
+                  </p>
+                )}
               </>
             )}
           </div>

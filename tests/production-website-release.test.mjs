@@ -30,6 +30,11 @@ function qualifiedFixture() {
       sourceSha: 'a'.repeat(40),
       updaterPublicKeyId: '415D3DF4B3D0CFB8',
       qualified: true,
+      sourceMaterials: {
+        name: `JSTorrent_${version}_AppImage-sources-final.tar.gz`,
+        bytes: 847197977,
+        sha256: 'c'.repeat(64),
+      },
       assets: names.map((name) => ({ name, bytes: 1234, sha256: 'b'.repeat(64) })),
     },
   }
@@ -55,6 +60,7 @@ test('an enabled qualified matrix binds all platform URLs to its immutable relea
     macosIntelUrl: 'JSTorrent_0.3.0_x64.dmg',
     linuxAppImageUrl: 'JSTorrent_0.3.0_amd64.AppImage',
     linuxArm64AppImageUrl: 'JSTorrent_0.3.0_aarch64.AppImage',
+    linuxSourceUrl: 'JSTorrent_0.3.0_AppImage-sources-final.tar.gz',
   }
   for (const [field, name] of Object.entries(expectedSuffixes)) {
     assert.equal(
@@ -200,6 +206,51 @@ for (const [name, mutate] of [
   ],
 ]) {
   test('refuses ' + name, () => {
+    const data = qualifiedFixture()
+    mutate(data)
+    assert.throws(() => selectProductionWebsiteRelease(data))
+  })
+}
+
+for (const [name, mutate] of [
+  [
+    'missing source material',
+    (data) => {
+      delete data.release.sourceMaterials
+    },
+  ],
+  [
+    'wrong source version',
+    (data) => {
+      data.release.sourceMaterials.name = 'JSTorrent_0.2.1_AppImage-sources-final.tar.gz'
+    },
+  ],
+  [
+    'unbounded source archive',
+    (data) => {
+      data.release.sourceMaterials.bytes = 2 * 1024 * 1024 * 1024 + 1
+    },
+  ],
+  [
+    'fractional source size',
+    (data) => {
+      data.release.sourceMaterials.bytes = 1.5
+    },
+  ],
+  [
+    'missing source hash',
+    (data) => {
+      data.release.sourceMaterials.sha256 = ''
+    },
+  ],
+  [
+    'extra source fields',
+    (data) => {
+      data.release.sourceMaterials.url = 'https://example.invalid'
+    },
+  ],
+]) {
+  test(`production inventory refuses ${name}`, () => {
     const data = qualifiedFixture()
     mutate(data)
     assert.throws(() => selectProductionWebsiteRelease(data))
