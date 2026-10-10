@@ -40,13 +40,23 @@ function qualifiedFixture() {
   }
 }
 
-test('committed descriptor keeps the published delivery unchanged', () => {
+test('committed descriptor selects the qualified public replacement and its sources', () => {
   const descriptor = JSON.parse(
     readFileSync(new URL('../website/src/data/production-release.json', import.meta.url)),
   )
-  assert.equal(descriptor.enabled, false)
-  assert.equal(descriptor.release, null)
-  assert.equal(selectProductionWebsiteRelease(descriptor), null)
+  assert.equal(descriptor.enabled, true)
+  assert.equal(descriptor.release.sourceSha, 'ff632f4588a474d7b169de3cea228bd406e6982d')
+  assert.equal(descriptor.release.assets.length, 15)
+  assert.equal(
+    descriptor.release.sourceMaterials.sha256,
+    '124233d3f2aad395fa2bff07be4d2ae03aafdedaef2f6ab181574251583c1e5e',
+  )
+  const selected = selectProductionWebsiteRelease(descriptor)
+  assert.equal(selected.tag, 'v0.3.0')
+  assert.equal(
+    selected.linuxSourceUrl,
+    'https://github.com/kzahel/rstorrent/releases/download/desktop-v0.3.0/JSTorrent_0.3.0_AppImage-sources-final.tar.gz',
+  )
 })
 
 test('an enabled qualified matrix binds all platform URLs to its immutable release', () => {

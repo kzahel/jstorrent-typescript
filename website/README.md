@@ -80,8 +80,11 @@ pnpm --filter @jstorrent/client test
 
 ## Curated production handoff
 
-`src/data/production-release.json` remains disabled with no release inventory.
-The old published downloads continue until a separately approved cutover.
+`src/data/production-release.json` now selects the qualified public desktop
+0.3.0 capsule from `kzahel/rstorrent`, signed source
+`ff632f4588a474d7b169de3cea228bd406e6982d`. All 17 public asset downloads,
+including the corresponding-source archive, were independently hashed before
+activation. The original updater root remains unchanged.
 
 Before activation, qualify and publish the exact immutable replacement capsule.
 Record its canonical version and `desktop-v<version>` tag, repository
@@ -125,7 +128,8 @@ insertion. Sticky-header scroll spacing keeps headings visible; at320px the
 header controls use a second row, long release-note tokens wrap, and the retained
 FAQ command scrolls horizontally within its answer. Actual hero, direct Download
 and direct FAQ navigation passes at320/390/1200px in a fresh synthetic-enabled
-static build. The real descriptor stays disabled; no public deployment occurs.
+static build. Those captures preceded activation; the current descriptor selects the public
+0.3.0 capsule.
 
 ## Chromebook Linux recovery copy
 

@@ -166,9 +166,12 @@ The deploy workflow discovers the latest legacy Tauri release while
 `website/src/data/production-release.json` is disabled. The replacement handoff
 is locally prepared with a closed 15-asset inventory and original updater root.
 An explicitly enabled qualified descriptor overrides runtime discovery, uses
-actual macOS DMGs and removes the legacy Linux installer command. It remains
-disabled/unpopulated: final signed qualification, production publisher activation,
-public artifact verification and website deployment are separate gates.
+actual macOS DMGs and removes the legacy Linux installer command. Desktop 0.3.0 is now public at the immutable `desktop-v0.3.0` tag in
+`kzahel/rstorrent`, bound to signed source
+`ff632f4588a474d7b169de3cea228bd406e6982d`. All 17 actual public downloads
+passed independent whole-file hashes. The descriptor now selects those exact
+15 core assets and the separately verified corresponding-source archive.
+Website deployment and desktop feed activation remain distinct operations.
 See [the website README](../../website/README.md) for activation invariants,
 focused guards and the distinction between metadata and byte/signature evidence.
 
@@ -226,3 +229,14 @@ public desktop/source availability passes. Privacy copy now describes actual
 pseudonymous counts, optional hosted context and page recipients; release builds
 keep additional hosted context disabled. Public validation and Web Store review
 submission follow deployment. Website publication does not activate desktop feeds.
+
+
+## Qualified desktop 0.3.0 website activation
+
+The enabled descriptor binds actual public downloads rather than a fixture.
+Fresh frozen-checkout validation covers the 30 inventory/source guards, selector
+TypeScript, focused lint, SDK and Astro build, tracked documentation and
+390/1200px Windows, both Mac choices and both Linux architectures. Linux remains
+best effort with adjacent source/rebuild access and headless setup from source.
+Production updater activation and asynchronous store approvals are separate
+checks; this website commit does not imply their completion.
