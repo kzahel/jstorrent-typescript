@@ -1,9 +1,9 @@
 <img src="extension/public/icons/js-128.png" alt="JSTorrent" width="64" align="left" style="margin-right: 16px;">
 
-# JSTorrent
+# JSTorrent TypeScript (legacy)
 
 > **JSTorrent development has moved to the
-> [Rust implementation](https://github.com/kzahel/rstorrent).** Download the
+> [Rust implementation](https://github.com/kzahel/jstorrent).** Download the
 > current product at **[jstorrent.com](https://jstorrent.com)**.
 >
 > This repository contains the previous TypeScript implementation. Its history,
@@ -23,7 +23,7 @@ The previous implementation is a BitTorrent client built on a shared TypeScript 
 | **Chrome Extension** | ✅ Available | [Chrome Web Store](https://chromewebstore.google.com/detail/jstorrent/dbokmlpefliilbjldladbimlcfgbolhk) — Chrome, Edge, Brave, and other Chromium browsers |
 | **Android** | ✅ Available | [Google Play](https://play.google.com/store/apps/details?id=com.jstorrent.app) — native app with QuickJS engine |
 | **ChromeOS** | ✅ Available | [Extension](https://chromewebstore.google.com/detail/jstorrent/dbokmlpefliilbjldladbimlcfgbolhk) + [Android companion app](https://play.google.com/store/apps/details?id=com.jstorrent.app), or [Crostini setup help](https://jstorrent.com/#no-play-store) |
-| **iOS** | ✅ Available | [AltStore PAL](https://altstore.io) (EU, Japan, and Brazil) or [sideload](https://github.com/kzahel/JSTorrent/releases) |
+| **iOS** | ✅ Available | [AltStore PAL](https://altstore.io) (EU, Japan, and Brazil) or [sideload](https://github.com/kzahel/jstorrent-typescript/releases) |
 
 ## Architecture
 
