@@ -1,8 +1,15 @@
-# JSTorrent Website
+# Previous TypeScript Website
 
-The public website is an Astro application deployed to GitHub Pages. It
-contains the product site, downloads, blog, legacy compatibility routes, and a
-browser-hosted client page that reuses JSTorrent's React/Solid packages.
+Current website source and deployment are owned by
+[`kzahel/rstorrent/website`](https://github.com/kzahel/rstorrent/tree/main/website).
+The standalone site there retains the established design and blog without
+importing this repository's application workspace. Its production inventory
+updates from verified Rust releases. `/app` was a prototype and is retired.
+
+This directory preserves the previous website for reference and rollback. The
+old deployment workflow is manual-only; ordinary changes here no longer
+publish the canonical website. The instructions below describe this historical
+workspace build.
 
 ## Development
 

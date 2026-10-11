@@ -1,13 +1,8 @@
 name: Deploy to GitHub Pages
 
+# Canonical deployment lives in the Rust implementation. Retain this workflow
+# only for a deliberate rollback with the old custom-domain binding restored.
 on:
-  push:
-    branches: ['main']
-    tags:
-      - 'website-v*'
-    paths:
-      - 'website/**'
-      - '.github/workflows/deploy-website.yml'
   workflow_dispatch:
 
 permissions:
