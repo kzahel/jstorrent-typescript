@@ -2,7 +2,16 @@
 
 # JSTorrent
 
-A modern, full-featured BitTorrent client built on a shared TypeScript engine that runs everywhere.
+> **JSTorrent development has moved to the
+> [Rust implementation](https://github.com/kzahel/rstorrent).** Download the
+> current product at **[jstorrent.com](https://jstorrent.com)**.
+>
+> This repository contains the previous TypeScript implementation. Its history,
+> releases and platform code remain available for reference. The documentation
+> below describes that implementation; current desktop, Android and ChromeOS
+> development lives in the Rust repository. iOS is outside that replacement.
+
+The previous implementation is a BitTorrent client built on a shared TypeScript engine.
 
 **[Google Play](https://play.google.com/store/apps/details?id=com.jstorrent.app)** | **[Desktop App](https://jstorrent.com)** | **[Chrome Web Store](https://chromewebstore.google.com/detail/jstorrent/dbokmlpefliilbjldladbimlcfgbolhk)** | **[Website](https://jstorrent.com)**
 
